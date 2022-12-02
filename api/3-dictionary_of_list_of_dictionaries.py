@@ -1,26 +1,37 @@
 #!/usr/bin/python3
-"""returns information about his/her TODO list progress"""
-import urllib.request
-import json
-
+"""
+Task 3 - extend your Python script to export data in the JSON format.
+"""
 
 if __name__ == '__main__':
-    userDict = {}
-    taskList = []
-    with urllib.request.urlopen('https://jsonplaceholder'
-                                '.typicode.com/users') as response:
-        users = json.loads(response.read().decode())
+    import requests
+    import json
+    from sys import argv
 
-    with urllib.request.urlopen('https://jsonplaceholder'
-                                '.typicode.com/todos') as response:
-        jsonDict = json.loads(response.read().decode())
-        for user in users:
-            for line in jsonDict:
-                if line['userId'] == user['id']:
-                    tempDict = {"username": user['username'], "task": line['title'], "completed": line['completed']}
-                    taskList.append(tempDict)
-            userDict[user['id']] = taskList
+    ids = set()
+    rq = requests.get('https://jsonplaceholder.typicode.com/posts')
+    rqdata = rq.json()
+    for user in rqdata:
+        ids.add(user.get('userId'))
 
+    export = {}
+    for user in ids:
+        rq = requests.get('https://jsonplaceholder.typicode.com/users/{}'.
+                          format(user))
+        rqname = rq.json().get('username')
 
-    with open(f'./todo_all_employees.json', 'w+') as file:
-        file.write(json.dumps(userDict))
+        rq = requests.get('https://jsonplaceholder.typicode.com/' +
+                          'todos?userId={}'.format(user))
+        rqdata = rq.json()
+
+        export['{}'.format(user)] = []
+        for task in rqdata:
+            export['{}'.format(user)].append({
+                'task': task.get('title'),
+                'completed': task.get('completed'),
+                'username': rqname
+            })
+
+    with open('todo_all_employees.json', 'w') as outfile:
+        json.dump({int(x): export[x] for x in export.keys()},
+                  outfile, sort_keys=True)
