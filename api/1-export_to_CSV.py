@@ -1,14 +1,12 @@
 #!/usr/bin/python3
 """returns information about his/her TODO list progress"""
+import urllib.request
+import json
+import sys
+import csv
 
 
 if __name__ == '__main__':
-    import urllib.request
-    import json
-    import sys
-    import csv
-
-
     uId = int(sys.argv[1])
     rows = []
     with urllib.request.urlopen('https://jsonplaceholder'
