@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 """returns information about his/her TODO list progress"""
-import urllib.request
-import json
-import sys
 
 
 if __name__ == '__main__':
+    import urllib.request
+    import json
+    import sys
+
 
     uId = int(sys.argv[1])
     toDoList = []
