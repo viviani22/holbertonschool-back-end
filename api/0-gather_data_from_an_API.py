@@ -4,6 +4,7 @@ import urllib.request
 import json
 import sys
 
+
 if __name__ == "__main__":
     uId = int(sys.argv[1])
     toDoList = []
