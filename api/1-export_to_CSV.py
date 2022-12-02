@@ -22,8 +22,7 @@ if __name__ == '__main__':
         jsonDict = json.loads(response.read().decode())
         for line in jsonDict:
             if line['userId'] == uId:
-                strUID = f'"{uId}"'
-                row = [strUID, userName]
+                row = [str(uId), userName, line['completed'], line['title']]
                 rows.append(row)
 
 
