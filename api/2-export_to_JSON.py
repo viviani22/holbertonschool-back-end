@@ -1,27 +1,30 @@
 #!/usr/bin/python3
-''' *** *** '''
+"""returns information about his/her TODO list progress"""
+import urllib.request
+import json
+import sys
+
 
 if __name__ == '__main__':
-    import requests
-    import json
-    from sys import argv
+    uId = int(sys.argv[1])
+    userDict = {}
+    taskList = []
+    with urllib.request.urlopen('https://jsonplaceholder'
+                                '.typicode.com/users') as response:
+        users = json.loads(response.read().decode())
+        for user in users:
+            if user['id'] == uId:
+                userName = user['username']
 
-    rq = requests.get('https://jsonplaceholder.typicode.com/users/{}'.
-                      format(argv[1]))
-    rqname = rq.json().get('username')
+    with urllib.request.urlopen('https://jsonplaceholder'
+                                '.typicode.com/todos') as response:
+        jsonDict = json.loads(response.read().decode())
+        for line in jsonDict:
+            if line['userId'] == uId:
+                tempDict = {"task": line['title'], "completed": line['completed'], "username": userName}
+                taskList.append(tempDict)
+            userDict[uId] = taskList
 
-    rq = requests.get('https://jsonplaceholder.typicode.com/todos?userId={}'.
-                      format(argv[1]))
-    rqdata = rq.json()
 
-    export = {}
-    export['{}'.format(argv[1])] = []
-    for task in rqdata:
-        export['{}'.format(argv[1])].append({
-            'task': task.get('title'),
-            'completed': task.get('completed'),
-            'username': rqname
-        })
-
-    with open('{}.json'.format(argv[1]), 'w') as outfile:
-        json.dump(export, outfile)
+    with open(f'./{uId}.json', 'w+') as file:
+        file.write(json.dumps(userDict))
